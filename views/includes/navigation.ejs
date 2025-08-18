@@ -1,0 +1,25 @@
+<header class="main-header">
+    <nav class="main-header__nav">
+        <ul class="main-header__item-list">
+            <li class="main-header__item">
+                <a class="<%= path === '/user/home' ? 'active' : '' %>" href="/user/home">Home</a>
+            </li>
+             <% if(role === 'user'){ %>
+            <li class="main-header__item">
+                <a class="<%= path === '/products' ? 'active' : '' %>" href="/user/allProducts">Products</a>
+            </li>
+            <li class="main-header__item">
+                <a class="<%= path === '/cart' ? 'active' : '' %>" href="/user/viewCart">Cart</a>
+            </li>
+             <% } %>
+            <% if(role === 'admin'){ %>
+            <li class="main-header__item">
+                <a class="<%= path === '/admin/add-product' ? 'active' : '' %>" href="/admin/add-product">Add Product
+            </li>
+            <li class="main-header__item">
+                <a class="<%= path === '/products' ? 'active' : '' %>" href="/admin/allProducts">Products</a>
+            </li>
+            <% } %>
+        </ul>
+    </nav>
+</header>

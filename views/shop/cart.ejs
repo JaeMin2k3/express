@@ -1,0 +1,12 @@
+
+<body>
+  <main>
+    <h1>My Cart</h1>
+    <% for(let i = 0 ; i < cart.products.length; i++){ %>
+    <h2><%= cart.products[i].name %></h2>
+    <h2><%= cart.products[i].qty %></h2>
+  <%}%>
+    <h1>Total Price</h1>
+    <h2><%= cart.totalPrice %></h2>
+  </main>
+</body>

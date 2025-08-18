@@ -1,0 +1,39 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="../../public/css/home.css">
+</head>
+<body>
+  <%- include('../includes/navigation.ejs') %>
+
+  <header class="hero">
+    <div class="hero-content">
+      <h1>Welcome to My Shop</h1>
+      <p>Your one-stop destination for amazing products.</p>
+      <a href="/products" class="btn">Shop Now</a>
+    </div>
+  </header>
+
+  <section class="features">
+    <div class="feature">
+      <i class="fas fa-shipping-fast"></i>
+      <h3>Fast Delivery</h3>
+      <p>We ensure quick and safe delivery to your doorstep.</p>
+    </div>
+    <div class="feature">
+      <i class="fas fa-tags"></i>
+      <h3>Best Prices</h3>
+      <p>Top quality products at unbeatable prices.</p>
+    </div>
+    <div class="feature">
+      <i class="fas fa-star"></i>
+      <h3>Top Rated</h3>
+      <p>We’re trusted by thousands of happy customers.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; <%= new Date().getFullYear() %> My Shop. All rights reserved.</p>
+  </footer>
+
+  <%- include('../includes/end.ejs') %>
+</body>
+</html>
