@@ -19,13 +19,18 @@
                         </div>
                         <div class="card__content">
                             <h2 class="product__price"><%= product.price %></h2>
-                            <p class="product__description">A very interesting book about so many even more interesting things!</p>
+                            <h2 class="product__price"><%= product.description %></h2>
                         </div>
                         <div class="card__actions">
                             <a href="/user/products/<%= product.id %>" class = "btn"  >Details</a>
+                            <% if (role === 'user'){ %>
                             <%- include('../includes/add-to-cart', {product: product}) %>
+                            <% } %>
                             <% if (role === 'admin'){ %>
                             <%- include('../includes/delete-product', {product: product}) %>
+                            <% } %>
+                            <% if (role === 'admin'){ %>
+                            <%- include('../includes/editProduct', {product: product}) %>
                             <% } %>
                         </div>
                     </article>

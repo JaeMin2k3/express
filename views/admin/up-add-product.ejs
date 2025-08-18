@@ -1,0 +1,28 @@
+<%- include('../includes/head') %>
+</head>
+<body>
+  <%- include('../includes/navigation') %>
+  <main class="centered">
+
+    <form method="POST" action="<%= editing ? '/admin/editProduct' : '/admin/add-product' %>">
+      <% if (editing) { %>
+        <input type="hidden" name="id" value="<%= product.id %>">
+      <% } %>
+      <h1>ProductName:</h1>
+      <input type="text" name="title" value="<%= product ? product.title : '' %>" required>
+
+      <h1>ProductPrice:</h1>
+      <input type="number" step="0.01" name="price" value="<%= product ? product.price : '' %>" required>
+
+      <h1>Description:</h1>
+      <input type="text" name="description" value="<%= product ? product.description : '' %>">
+
+      <% if (editing) { %>
+        <button class="btn" type ="submit">updateProduct</button>
+      <% } else { %>
+       <button class="btn" type ="submit">addProduct</button>
+      <% } %>
+    </form>
+
+  </main>
+  <%- include('../includes/end') %>

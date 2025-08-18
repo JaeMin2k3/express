@@ -66,4 +66,12 @@ module.exports = class Product {
       fs.writeFile(p,JSON.stringify(newProducts), e => {console.log(e)});
     })
   };
+
+  static editProduct(productId, product){
+    getProductsFromFile(products => {
+      let newProducts = products.filter(prod => prod.id !== productId);
+      newProducts = [...newProducts, product]
+      fs.writeFile(p,JSON.stringify(newProducts), e => {console.log(e)});
+    })
+  };
 }; 
