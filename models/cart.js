@@ -6,12 +6,23 @@ const p = path.join(
   'data', 
   'cart.json');
 
-  const getProductsFromFile = cb => {
-    fs.readFile(p, (err, fileContent) => {
-      if (err) {
-        cb([]);
-      } else {
-        cb(JSON.parse(fileContent));
+  // const getProductsFromFile = cb => {
+  //   fs.readFile(p, (err, fileContent) => {
+  //     if (err) {
+  //       cb([]);
+  //     } else {
+  //       cb(JSON.parse(fileContent));
+  //     }
+  //   });
+  // };
+  const getProductsFromFile = (cb) => {
+    fs.readFile(p, (err, data) => {          
+      if (err) return cb([]);                       
+      try {              
+        cb(JSON.parse(data));
+      } catch (e) {
+        console.error('products.json invalid -> fallback []', e.message);
+        cb([]);                                      
       }
     });
   };
