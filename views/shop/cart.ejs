@@ -5,6 +5,7 @@
     <% for(let i = 0 ; i < cart.products.length; i++){ %>
     <h2><%= cart.products[i].name %></h2>
     <h2><%= cart.products[i].qty %></h2>
+    <%- include('../includes/deleteProductInCart', {id: cart.products[i].id}) %>
   <%}%>
     <h1>Total Price</h1>
     <h2><%= cart.totalPrice %></h2>

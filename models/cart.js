@@ -46,5 +46,16 @@ const p = path.join(
       static getAllCart(cb){
         getProductsFromFile(cb)
       }
+      static deleteProductInCart(product){
+          getProductsFromFile(cart => {
+            const newCart = cart.products.filter(prod => prod.id !== product.id);
+            const index = cart.products.findIndex(prod => prod.id === product.id); 
+            console.log(index);
+            let qty = cart.products[index].qty;
+            cart.products = [...newCart];
+            cart.totalPrice = cart.totalPrice - (product.price * qty);
+            fs.writeFile(p,JSON.stringify(cart), e => {console.log(e)});
+          })
+        };
   };
 

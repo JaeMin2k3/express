@@ -1,5 +1,5 @@
 const Product = require('../models/product')
-
+const Cart = require('../models/cart')
 exports.getAllProducts = (req,res,next) => {
   Product.fetchAll(products => {
     res.render('shop/product-list', {
@@ -25,6 +25,9 @@ exports.postDeleteProduct = (req,res,next) => {
   const prodId = req.params.productId;
   console.log(prodId);
   Product.deleteProduct(prodId);
+  Product.findById(prodId, product => {
+    Cart.deleteProductInCart(product);
+  })
   res.render('shop/home', {
     pageTitle: ' Home Admin',
     role: 'admin',

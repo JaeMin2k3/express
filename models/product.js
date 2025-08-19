@@ -6,12 +6,26 @@ const p = path.join(
   'products.json'
 );
 
-const getProductsFromFile = cb => {
-  fs.readFile(p, (err, fileContent) => {
-    if (err) {
-      cb([]);
-    } else {
-      cb(JSON.parse(fileContent));
+// const getProductsFromFile = cb => {
+//   fs.readFile(p, (err, fileContent) => {
+//     if (err) {
+//       cb([]);
+//     } else {
+//       cb(JSON.parse(fileContent));
+//     }
+//   });
+// };
+const getProductsFromFile = (cb) => {
+  fs.readFile(p, 'utf8', (err, data) => {          // đọc 'utf8'
+    if (err) return cb([]);                        // file chưa tồn tại -> []
+    try {
+      const text = (data || '').trim();
+      if (!text) return cb([]);                    // rỗng -> []
+      const parsed = JSON.parse(text);             // parse an toàn
+      cb(Array.isArray(parsed) ? parsed : []);
+    } catch (e) {
+      console.error('products.json invalid -> fallback []', e.message);
+      cb([]);                                      // JSON hỏng -> fallback []
     }
   });
 };
