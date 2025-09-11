@@ -2,15 +2,17 @@
   <main>
     <h1>My Cart</h1>
 
-    <% if (cart && cart.products && cart.products.length > 0) { %>
-      <% for (let i = 0; i < cart.products.length; i++) { %>
-        <h2><%= cart.products[i].name %></h2>
-        <h2><%= cart.products[i].qty %></h2>
-        <%- include('../includes/deleteProductInCart', { id: cart.products[i].id }) %>
+    <% if ( cart.length > 0) { %>
+      <%
+      for (let i = 0; i < cart.length; i++) { %>
+        <h2><%= cart[i].title %></h2>
+        <h2><%= cart[i].quantity %></h2>
+        <h2><%= cart[i].price %></h2>
+        <%- include('../includes/deleteProductInCart', { id: cart[i].id }) %>
       <% } %>
 
       <h1>Total Price</h1>
-      <h2><%= cart.totalPrice %></h2>
+      <%= totalPrice %>
     <% } else { %>
       <h1>Khong co san pham nao</h1>
     <% } %>

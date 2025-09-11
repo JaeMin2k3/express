@@ -1,14 +1,14 @@
 const Product = require('../models/product')
 const Cart = require('../models/cart')
-exports.getAllProducts = (req,res,next) => {
-  Product.fetchAll(products => {
-    res.render('shop/product-list', {
+exports.getAllProducts = async (req,res,next) => { 
+   req.user.getProducts().then(products => {
+     res.render('shop/product-list', {
       prods: products,
       role: 'admin',
       path: '/products',
       pageTitle: 'home'
     })
-  })
+   })
 };
 
 exports.getAddProduct = (req,res,next)=>{
@@ -21,24 +21,29 @@ exports.getAddProduct = (req,res,next)=>{
   });
 };
 
-exports.postDeleteProduct = (req,res,next) => {
-  const prodId = req.params.productId;
-  console.log(prodId);
-  Product.deleteProduct(prodId);
-  Product.findById(prodId, product => {
-    Cart.deleteProductInCart(product);
-  })
-  res.render('shop/home', {
-    pageTitle: ' Home Admin',
-    role: 'admin',
-    path: '/product'
-  })
+exports.postDeleteProduct = async (req,res,next) => {
+  const prodId = req.user.id;
+  await Product.destroy({
+  where: { userId: prodId}  
+  });
+  const products = req.user.getProducts();
+    return res.render('shop/product-list', {
+      prods: products,
+      pageTitle: 'products',
+      role: 'admin',
+      path: '/admin/allProducts'
+    });
+  
 };
 
 exports.postNewProduct = (req,res, next) => {
-  let newProduct = new Product(null, req.body.title, null, req.body.description, req.body.price);
-  console.log(newProduct);
-  newProduct.save();
+  req.user
+  .createProduct({
+    title: req.body.title,
+    price: req.body.price,
+    imgUrl: req.body.imgUrl,
+    description: req.body.description
+  });
   res.render('shop/home',{
     pageTitle: 'product',
     role: 'admin',
@@ -46,29 +51,33 @@ exports.postNewProduct = (req,res, next) => {
   })
 }
 
- exports.getViewEditProduct = (req,res,next) => {
+ exports.getViewEditProduct = async (req,res,next) => {
   const prodId = req.params.productId;
-    Product.findById(prodId,(product) => {
+  console.log(prodId);
+    req.user.getProducts({where: {id: prodId}}).then(product =>
       res.render('admin/up-add-product', {
-        product: product,
+        product: product[0],
         role: 'admin',
         pageTitle: '/addProduct',
         path: '/addProduct',
         editing: true
-      })
-    }
-  );
+      }));   
  };
 
- exports.postEditProduct = (req, res, next) => {
-  const editProduct = new Product(req.body.id, req.body.title, null, req.body.description, req.body.price);
-  Product.editProduct(editProduct.id, editProduct);
-  Product.fetchAll(newProduct => {
-  res.render('shop/product-list',{
-    prods: newProduct,
-    pageTitle: 'products',
-    role: 'admin',
-    path: '/admin/allProducts'
-    })
+ exports.postEditProduct = async (req, res, next) => {
+  const prodId = req.body.id;
+  const products = await req.user.getProducts({ where: { id: prodId } });
+  await products[0].update({
+    tile: req.body.tile,
+    price: req.body.price,
+    description: req.body.description,
+    imgUrl: req.body.imgUrl
   })
+  const newProducts = await req.user.getProducts();
+    return res.render('shop/product-list', {
+      prods: newProducts,
+      pageTitle: 'products',
+      role: 'admin',
+      path: '/admin/allProducts'
+    });
 }

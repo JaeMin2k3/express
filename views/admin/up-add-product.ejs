@@ -17,6 +17,8 @@
       <h1>Description:</h1>
       <input type="text" name="description" value="<%= product ? product.description : '' %>">
 
+      <h1>imgUrl:</h1>
+      <input type="text" name="imgUrl" value="<%= product ? product.imgUrl : '' %>">
       <% if (editing) { %>
         <button class="btn" type ="submit">updateProduct</button>
       <% } else { %>
