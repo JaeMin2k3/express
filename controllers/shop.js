@@ -74,56 +74,102 @@ exports.postAddProductToCart = async (req, res, next) => {
 
 
 
-exports.deleteCartItem = async (req,res, next) => {
-  const prodId = req.params.productId;
-  await Cart.destroy({where: {id: prodId}});
-  let totalPrice = 0;
-  const cart = await Cart.findAll();
-    return res.render('shop/cart', {
-    cart: cart,
-    totalPrice: totalPrice,
-    role: 'user',
-    path: '/user/cart'
-     })
-  };
-   
+// DELETE /user/cart/:productId
+exports.deleteCartItem = async (req, res, next) => {
+  try {
+    const prodId = req.params.productId;
 
-exports.getViewCart = async(req,res, next) => {
-  const cart = await req.user.getCart();
-  console.log(cart);
-  if(cart){
-    cart.getProducts().then(products => {
-      res.render('shop/cart',{
-      cart: products,
+    const cart = await req.user.getCart();
+    if (!cart) {
+      return res.render('shop/cart', { cart: [], role: 'user', title: 'Cart', totalPrice: 0 });
+    }
+
+    // Xóa hẳn product khỏi giỏ (xóa dòng trong CartItem)
+    await cart.removeProduct(prodId);  // <<< quan trọng: dùng removeProduct thay vì destroy trên mảng
+
+    // Lấy lại dữ liệu sau khi xóa để render
+    const products = await cart.getProducts({ through: { attributes: ['quantity'] } });
+    const items = products.map(p => ({
+      ...p.get({ plain: true }),
+      quantity: p.cartItem?.quantity ?? 0
+    }));
+    const totalPrice = items.reduce((s, it) => s + Number(it.price || 0) * Number(it.quantity || 0), 0);
+
+    return res.render('shop/cart', {
+      cart: items,
       role: 'user',
-      tiltle: 'Cart',
-      totalPrice: 1000
-    })
-    }).catch(err => {
-      console.log(err);
+      title: 'Cart',
+      totalPrice
     });
-  }else{
-    res.render('shop/cart',{
-      cart: [],
+  } catch (err) {
+    console.error(err);
+    return next(err);
+  }
+};
+
+// Controller: GET /user/cart
+exports.getViewCart = async (req, res, next) => {
+  try {
+    const cart = await req.user.getCart();
+    if (!cart) {
+      return res.render('shop/cart', {
+        cart: [],
+        role: 'user',
+        title: 'Cart',
+        totalPrice: 0
+      });
+    }
+
+    // Lấy danh sách Product trong giỏ + quantity từ bảng trung gian
+    const products = await cart.getProducts({
+      through: { attributes: ['quantity'] }  // quan trọng!
+      // có thể thêm include option khác nếu cần (ảnh, category...)
+    });
+
+    // Chuẩn hoá dữ liệu cho view
+    const items = products.map(p => ({
+      ...p.get({ plain: true }), // plain: true -> chuyển instance sequelize thành object javascript thuần.
+      quantity: p.cartItem?.quantity ?? 0
+    }));
+
+    const totalPrice = items.reduce((s, it) => s + Number(it.price || 0) * Number(it.quantity || 0), 0);
+
+    return res.render('shop/cart', {
+      cart: items,            // [{ id, title, price, quantity, ... }]
       role: 'user',
-      tiltle: 'Cart',
-      totalPrice: 0
+      title: 'Cart',
+      totalPrice: totalPrice
+    });
+  } catch (err) {
+    console.error(err);
+    return next(err);
+  }
+};
+
+exports.getOrder = (req, res, next) => {
+  
+}
+
+exports.postOrder = async (req,res, next) => {
+  req.user.getCart().then(cart => {
+    return cart.getProducts();
+  }).then(products => {
+    return req.user.createOrder()
+    .then(order => {
+      return order.addProducts(products.map(product => {
+        product.orderItem = {quantity: product.cartItem.quantity};
+        return product;
+      }))
     })
-  }
-  // req.user.getCart().then(cart => {
-  //   console.log(cart);
-  //   if(cart.length > 0){
-  //   return cart.getProducts().then(products => {
-  //     console.log(products);
-  //     res.render('shop/cart',{
-  //     cart: products,
-  //     role: 'user',
-  //     tiltle: 'Cart',
-  //     totalPrice: 1000
-  //   })
-  //   })
-  //   }
-  }
+    .catch(err => console.log(err));
+  })
+  .then(result => {
+    res.redirect('/user/order');
+  })
+  .catch(err => console.log(err));
+}
+
+
   
 
 

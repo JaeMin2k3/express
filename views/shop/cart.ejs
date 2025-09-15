@@ -1,8 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../../public/css/cart.css">
+</head>
 <body>
   <main>
     <h1>My Cart</h1>
 
-    <% if ( cart.length > 0) { %>
+    <% if ( cart.length > 0 && totalPrice > 0) { %>
       <%
       for (let i = 0; i < cart.length; i++) { %>
         <h2><%= cart[i].title %></h2>
@@ -16,6 +24,11 @@
     <% } else { %>
       <h1>Khong co san pham nao</h1>
     <% } %>
-
+    <br>
+    <% if(totalPrice > 0){ %> 
+      <form action = '/user/order/<%= cart[0].id %>' method="POST">
+        <button>Order Now</button>
+      </form>
+      <%}%>
   </main>
 </body>

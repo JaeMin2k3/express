@@ -22,11 +22,11 @@ exports.getAddProduct = (req,res,next)=>{
 };
 
 exports.postDeleteProduct = async (req,res,next) => {
-  const prodId = req.user.id;
+  const prodId = req.params.productId;
   await Product.destroy({
-  where: { userId: prodId}  
+  where: { id : prodId}  
   });
-  const products = req.user.getProducts();
+  const products = await req.user.getProducts();
     return res.render('shop/product-list', {
       prods: products,
       pageTitle: 'products',
